@@ -252,8 +252,9 @@ def _build_prompt(text: str, language: str, style: str, is_final: bool) -> tuple
             f"Combine these partial summaries into one unified video summary in {lang}.\n"
             f"Style: {style}\n\n"
             "Format:\n**[Video Topic]**\n\n"
+            "⏱️ Chapters (Logical Breakdown):\n• [Topic/Theme 1]\n• [Topic/Theme 2]\n\n"
             "📌 Key Points:\n• ...\n• ...\n• ...\n\n"
-            "📝 Summary:\n[2-3 paragraphs]\n\n"
+            "📝 Detailed Summary:\n[2-3 paragraphs describing the flow and main ideas]\n\n"
             "🎯 Main Takeaway:\n[One sentence]\n\n"
             f"PARTIAL SUMMARIES:\n{text}"
         )
