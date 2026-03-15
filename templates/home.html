@@ -1,0 +1,201 @@
+{% extends "base.html" %}
+
+{% block title %}VidSummarize - AI Video Transcription & Summarization{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/fileUpload.js') }}" defer></script>
+<script src="{{ url_for('static', filename='js/youtubeHandler.js') }}" defer></script>
+<script src="{{ url_for('static', filename='js/main.js') }}" defer></script>
+{% endblock %}
+
+{% block content %}
+
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container">
+        <div class="hero-content">
+            <h1 class="hero-title animate-fadeIn">
+                🎬 VidSummarize
+            </h1>
+            <p class="hero-subtitle animate-fadeIn" style="animation-delay: 0.2s;">
+                A Multilingual AI-Powered Video Transcription and Summarization Platform
+            </p>
+        </div>
+    </div>
+</section>
+
+<!-- Upload Section -->
+<section class="upload-section">
+    <div class="container">
+        <div class="upload-card">
+            <h2 class="upload-title">Upload or Paste YouTube Link</h2>
+            
+            <!-- Upload Method Selection -->
+            <div class="upload-methods">
+                <button class="upload-method-btn active" id="uploadMethodBtn" data-method="upload">
+                    <span class="upload-method-icon">📤</span>
+                    <span class="upload-method-text">Upload Video</span>
+                </button>
+                <button class="upload-method-btn" id="youtubeMethodBtn" data-method="youtube">
+                    <span class="upload-method-icon">🔗</span>
+                    <span class="upload-method-text">Paste YouTube Link</span>
+                </button>
+            </div>
+            
+            <!-- Upload Content -->
+            <div class="upload-content active" id="uploadContent">
+                <div class="file-upload" id="fileUploadZone">
+                    <input type="file" accept="video/*" id="videoFileInput">
+                    <div class="file-upload-icon">📁</div>
+                    <div class="file-upload-text">Drop your video here or click to browse</div>
+                    <div class="file-upload-hint">Supports MP4, AVI, MOV, WMV, FLV, MKV, WEBM (Max 500MB)</div>
+                </div>
+                
+                <!-- Selected File Info -->
+                <div id="fileInfo" class="hidden" style="margin-top: var(--space-lg);">
+                    <div class="card-glass animate-slideIn">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <h4 id="fileName" style="margin-bottom: var(--space-xs);"></h4>
+                                <p id="fileSize" class="text-muted" style="margin: 0; font-size: var(--font-size-sm);"></p>
+                            </div>
+                            <button class="btn btn-outline btn-sm" id="removeFileBtn">Remove</button>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary btn-lg" id="uploadBtn" style="width: 100%; margin-top: var(--space-lg);">
+                        🚀 Start Processing
+                    </button>
+                </div>
+            </div>
+            
+            <!-- YouTube Content -->
+            <div class="upload-content" id="youtubeContent">
+                <div class="input-group">
+                    <input type="url" class="input" id="youtubeUrlInput" placeholder="https://www.youtube.com/watch?v=...">
+                    <button class="btn btn-primary" id="youtubeSubmitBtn">
+                        🚀 Process
+                    </button>
+                </div>
+                <p class="text-muted text-center" style="margin-top: var(--space-md); font-size: var(--font-size-sm);">
+                    Paste any YouTube video URL to get started
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="features-section" id="features">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">✨ Features</h2>
+            <p class="section-subtitle">
+                Everything you need to transform videos into accessible, searchable content
+            </p>
+        </div>
+        
+        <div class="features-grid">
+            <div class="feature-card animate-fadeIn" style="animation-delay: 0.1s;">
+                <span class="feature-icon">📄</span>
+                <h3 class="feature-title">Transcription</h3>
+                <p class="feature-description">
+                    Convert speech to text using Whisper ASR. High accuracy multilingual transcription.
+                </p>
+            </div>
+            
+            <div class="feature-card animate-fadeIn" style="animation-delay: 0.2s;">
+                <span class="feature-icon">🤖</span>
+                <h3 class="feature-title">Summarization</h3>
+                <p class="feature-description">
+                    Generate concise summaries using robust mT5 models. Extract key insights in multiple Indian languages automatically.
+                </p>
+            </div>
+            
+            <div class="feature-card animate-fadeIn" style="animation-delay: 0.3s;">
+                <span class="feature-icon">🌐</span>
+                <h3 class="feature-title">Multilingual Support</h3>
+                <p class="feature-description">
+                    Auto-detect and handle multiple languages. Supercharged to support global texts effectively.
+                </p>
+            </div>
+            
+            <div class="feature-card animate-fadeIn" style="animation-delay: 0.4s;">
+                <span class="feature-icon">💾</span>
+                <h3 class="feature-title">Download Output</h3>
+                <p class="feature-description">
+                    Get transcript and summary in TXT/PDF format. Easy to share with native font support.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- How It Works Section -->
+<section class="how-it-works-section" id="how-it-works">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">🔧 How It Works</h2>
+            <p class="section-subtitle">
+                Simple, fast, and powered by cutting-edge AI
+            </p>
+        </div>
+        
+        <div class="steps-container">
+            <div class="step-card">
+                <div class="step-number">1</div>
+                <h3 class="step-title">Upload or Link</h3>
+                <p class="step-description">
+                    Upload your video file or paste a YouTube URL
+                </p>
+            </div>
+            
+            <div class="step-card">
+                <div class="step-number">2</div>
+                <h3 class="step-title">AI Processing</h3>
+                <p class="step-description">
+                    Our AI extracts audio, transcribes, and summarizes
+                </p>
+            </div>
+            
+            <div class="step-card">
+                <div class="step-number">3</div>
+                <h3 class="step-title">Download Results</h3>
+                <p class="step-description">
+                    Get your transcript and summary in seconds
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- About Section -->
+<section class="features-section" id="about" style="background: var(--color-bg-primary);">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">📚 About VidSummarize</h2>
+            <p class="section-subtitle" style="max-width: 800px;">
+                VidSummarize aims to democratize access to video content by automatically generating 
+                high-quality transcripts, summaries, and chapter breakdowns. Perfect for learners, 
+                researchers, and content creators who need quick access to key insights without 
+                watching entire videos.
+            </p>
+        </div>
+        
+        <div class="card" style="max-width: 900px; margin: var(--space-3xl) auto 0; text-align: center;">
+            <h3 style="margin-bottom: var(--space-lg);">🚀 Built With Modern Technology</h3>
+            <div style="display: flex; flex-wrap: wrap; gap: var(--space-md); justify-content: center;">
+                <span class="badge badge-primary">Python Flask</span>
+                <span class="badge badge-primary">OpenAI Whisper</span>
+                <span class="badge badge-primary">HuggingFace mT5</span>
+                <span class="badge badge-primary">yt-dlp</span>
+                <span class="badge badge-primary">FFmpeg</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

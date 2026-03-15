@@ -1,0 +1,218 @@
+{% extends "base.html" %} {% block title %}Results - VidSummarize{% endblock %}
+{% block extra_css %}
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/results.css') }}"
+/>
+{% endblock %} {% block extra_js %}
+<script
+  src="{{ url_for('static', filename='js/downloadManager.js') }}"
+  defer
+></script>
+{% endblock %} {% block content %}
+
+<div class="results-page">
+  <div class="results-container">
+    <!-- Loading State (shown initially) -->
+    <div class="results-loading" id="loadingState">
+      <div class="loader loader-lg"></div>
+      <p class="results-loading-text">Loading results...</p>
+    </div>
+
+    <!-- Main Results Content (hidden initially) -->
+    <div class="hidden" id="resultsContent">
+      <!-- Results Header -->
+      <div class="results-header">
+        <div class="results-icon">✅</div>
+        <h1 class="results-title">Processing Complete!</h1>
+        <p class="results-subtitle">
+          Your video has been successfully transcribed and summarized
+        </p>
+      </div>
+
+      <!-- Video Information -->
+      <div class="video-info-card">
+        <div class="video-info-grid">
+          <div class="info-item">
+            <span class="info-icon">⏱️</span>
+            <p class="info-label">Duration</p>
+            <p class="info-value" id="videoDuration">--:--</p>
+          </div>
+          <div class="info-item">
+            <span class="info-icon">🌐</span>
+            <p class="info-label">Language</p>
+            <p class="info-value" id="videoLanguage">Detecting...</p>
+          </div>
+          <div class="info-item">
+            <span class="info-icon">📊</span>
+            <p class="info-label">Words</p>
+            <p class="info-value" id="wordCount">0</p>
+          </div>
+          <div class="info-item">
+            <span class="info-icon">📅</span>
+            <p class="info-label">Processed</p>
+            <p class="info-value" id="processedDate">Just now</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Download Section -->
+      <section class="download-section">
+        <h2 class="section-title">
+          <span>📥</span>
+          <span>Download Your Results</span>
+        </h2>
+
+        <div class="download-grid">
+          <!-- Transcript Downloads -->
+          <div class="download-card">
+            <span class="download-icon">📄</span>
+            <h3 class="download-title">Full Transcript</h3>
+            <p class="download-description">
+              Complete word-for-word transcription of your video
+            </p>
+            <div class="download-buttons">
+              <button class="btn btn-primary" id="downloadTranscriptPDF">
+                📄 PDF
+              </button>
+              <button class="btn btn-outline" id="downloadTranscriptTXT">
+                📝 TXT
+              </button>
+            </div>
+          </div>
+
+          <!-- Summary Downloads -->
+          <div class="download-card">
+            <span class="download-icon">✨</span>
+            <h3 class="download-title">Summary</h3>
+            <p class="download-description">
+              AI-generated concise summary of key points
+            </p>
+            <div class="download-buttons">
+              <button class="btn btn-secondary" id="downloadSummaryPDF">
+                📄 PDF
+              </button>
+              <button class="btn btn-outline" id="downloadSummaryTXT">
+                📝 TXT
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Preview Section -->
+      <section class="preview-section">
+        <h2 class="section-title">
+          <span>👁️</span>
+          <span>Preview</span>
+        </h2>
+
+        <!-- Preview Tabs -->
+        <div class="preview-tabs">
+          <button class="preview-tab active" data-tab="transcript">
+            📄 Transcript
+          </button>
+          <button class="preview-tab" data-tab="summary">✨ Summary</button>
+        </div>
+
+        <!-- Transcript Preview -->
+        <div class="preview-content active" id="preview-transcript">
+          <div class="preview-card">
+            <pre class="preview-text" id="transcriptText">
+Loading transcript...</pre
+            >
+            <div class="preview-actions">
+              <button class="btn btn-sm btn-outline" id="copyTranscript">
+                📋 Copy to Clipboard
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Summary Preview -->
+        <div class="preview-content" id="preview-summary">
+          <div class="preview-card">
+            <pre class="preview-text" id="summaryText">Loading summary...</pre>
+            <div class="preview-actions">
+              <button class="btn btn-sm btn-outline" id="copySummary">
+                📋 Copy to Clipboard
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Statistics Section -->
+      <section class="stats-section">
+        <h2 class="section-title">
+          <span>📊</span>
+          <span>Statistics</span>
+        </h2>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <span class="stat-icon">📝</span>
+            <p class="stat-value" id="transcriptWords">0</p>
+            <p class="stat-label">Transcript Words</p>
+          </div>
+          <div class="stat-card">
+            <span class="stat-icon">✨</span>
+            <p class="stat-value" id="summaryWords">0</p>
+            <p class="stat-label">Summary Words</p>
+          </div>
+          <div class="stat-card">
+            <span class="stat-icon">📉</span>
+            <p class="stat-value" id="compressionRatio">0%</p>
+            <p class="stat-label">Compression</p>
+          </div>
+          <div class="stat-card">
+            <span class="stat-icon">⏱️</span>
+            <p class="stat-value" id="processingTime">--</p>
+            <p class="stat-label">Processing Time</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Share Section -->
+      <section class="share-section">
+        <h3 class="share-title">📤 Share Your Results</h3>
+        <div class="share-buttons">
+          <button class="share-btn" id="copyLinkBtn">🔗 Copy Link</button>
+          <button class="share-btn" id="shareEmailBtn">📧 Email</button>
+          <button class="share-btn" id="shareTwitterBtn">🐦 Twitter</button>
+        </div>
+      </section>
+
+      <!-- Action Buttons -->
+      <div class="results-actions">
+        <button
+          class="btn btn-primary btn-lg"
+          onclick="window.location.href='/'"
+        >
+          🏠 Process Another Video
+        </button>
+        <button class="btn btn-outline" id="downloadAllBtn">
+          📦 Download All Files
+        </button>
+      </div>
+    </div>
+
+    <!-- Empty State (if no results) -->
+    <div class="results-empty hidden" id="emptyState">
+      <div class="empty-icon">📭</div>
+      <h2 class="empty-title">No Results Found</h2>
+      <p class="empty-message">
+        We couldn't find any results for this job. The processing may have
+        failed or the results may have expired.
+      </p>
+      <button class="btn btn-primary" onclick="window.location.href='/'">
+        🏠 Back to Home
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Hidden job ID -->
+<input type="hidden" id="jobId" value="{{ job_id }}" />
+
+{% endblock %}

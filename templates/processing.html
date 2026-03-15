@@ -1,0 +1,166 @@
+{% extends "base.html" %} {% block title %}Processing - VidSummarize{% endblock
+%} {% block extra_css %}
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/processing.css') }}"
+/>
+{% endblock %} {% block extra_js %}
+<script
+  src="{{ url_for('static', filename='js/processingManager.js') }}"
+  defer
+></script>
+{% endblock %} {% block content %}
+
+<div class="processing-page">
+  <div class="processing-card fade-in-up">
+    <!-- Processing Animation -->
+    <div class="processing-animation" id="processingAnimation">
+      <div class="processing-spinner">
+        <div class="spinner-ring"></div>
+        <div class="spinner-ring"></div>
+        <div class="spinner-icon">🎬</div>
+      </div>
+    </div>
+
+    <!-- Processing Status -->
+    <div class="processing-status" id="processingStatus">
+      <h1 class="processing-title">Processing Your Video</h1>
+      <p class="processing-stage" id="currentStage">Initializing...</p>
+      <p class="processing-message" id="statusMessage">
+        Please wait while we process your video
+      </p>
+    </div>
+
+    <!-- Progress Bar -->
+    <div class="progress-container" id="progressContainer">
+      <div class="progress-bar-wrapper">
+        <div class="progress-bar">
+          <div
+            class="progress-bar-fill"
+            id="progressBarFill"
+            style="width: 0%"
+          ></div>
+        </div>
+      </div>
+      <p class="progress-percentage" id="progressPercentage">0%</p>
+      <div class="estimated-time" id="estimatedTime">
+        <span class="estimated-time-icon">⏱️</span>
+        <span>Estimated time: Calculating...</span>
+      </div>
+    </div>
+
+    <!-- Video Information (hidden by default) -->
+    <div class="video-info hidden" id="videoInfo">
+      <h3 class="video-info-title">Video Details</h3>
+      <div class="video-info-content">
+        <div class="info-item">
+          <p class="info-label">Duration</p>
+          <p class="info-value" id="videoDuration">--:--</p>
+        </div>
+        <div class="info-item">
+          <p class="info-label">Language</p>
+          <p class="info-value" id="videoLanguage">Detecting...</p>
+        </div>
+        <div class="info-item">
+          <p class="info-label">File Size</p>
+          <p class="info-value" id="videoSize">---</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Processing Stages -->
+    <div class="stages-list" id="stagesList">
+      <div class="stage-item" id="stage-uploading">
+        <div class="stage-icon">📤</div>
+        <div class="stage-info">
+          <p class="stage-name">Uploading Video</p>
+          <p class="stage-description">
+            Transferring your video to our servers
+          </p>
+        </div>
+        <span class="stage-status">⏳</span>
+      </div>
+
+      <div class="stage-item" id="stage-extracting_audio">
+        <div class="stage-icon">🎵</div>
+        <div class="stage-info">
+          <p class="stage-name">Extracting Audio</p>
+          <p class="stage-description">Converting video to audio format</p>
+        </div>
+        <span class="stage-status">⏳</span>
+      </div>
+
+      <div class="stage-item" id="stage-transcribing">
+        <div class="stage-icon">📝</div>
+        <div class="stage-info">
+          <p class="stage-name">Transcribing Speech</p>
+          <p class="stage-description">Converting speech to text using AI</p>
+        </div>
+        <span class="stage-status">⏳</span>
+      </div>
+
+      <div class="stage-item" id="stage-summarizing">
+        <div class="stage-icon">✨</div>
+        <div class="stage-info">
+          <p class="stage-name">Generating Summary</p>
+          <p class="stage-description">Creating concise summary of content</p>
+        </div>
+        <span class="stage-status">⏳</span>
+      </div>
+
+      <div class="stage-item" id="stage-generating_output">
+        <div class="stage-icon">📄</div>
+        <div class="stage-info">
+          <p class="stage-name">Preparing Downloads</p>
+          <p class="stage-description">Generating TXT and PDF files</p>
+        </div>
+        <span class="stage-status">⏳</span>
+      </div>
+    </div>
+
+    <!-- Error State (hidden by default) -->
+    <div class="processing-error hidden" id="errorContainer">
+      <div class="error-icon">❌</div>
+      <h3 class="error-title">Processing Failed</h3>
+      <p class="error-message" id="errorMessage">
+        An error occurred while processing your video.
+      </p>
+    </div>
+
+    <!-- Success State (hidden by default) -->
+    <div class="processing-success hidden" id="successContainer">
+      <div class="success-icon">✅</div>
+      <h3 class="success-title">Processing Complete!</h3>
+      <p class="success-message">
+        Your video has been processed successfully. Redirecting to results...
+      </p>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="processing-actions" id="processingActions">
+      <button class="btn btn-outline cancel-btn" id="cancelBtn">
+        ❌ Cancel Processing
+      </button>
+    </div>
+
+    <!-- Error Actions (hidden by default) -->
+    <div class="processing-actions hidden" id="errorActions">
+      <button class="btn btn-primary" onclick="window.location.href='/'">
+        🏠 Back to Home
+      </button>
+      <button class="btn btn-outline" id="retryBtn">🔄 Try Again</button>
+    </div>
+
+    <!-- Success Actions (hidden by default) -->
+    <div class="processing-actions hidden" id="successActions">
+      <button class="btn btn-primary btn-lg" id="viewResultsBtn">
+        🎉 View Results
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Hidden job ID (passed from Flask) -->
+<input type="hidden" id="jobId" value="{{ job_id }}" />
+
+{% endblock %}

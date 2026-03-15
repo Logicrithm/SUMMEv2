@@ -1,0 +1,9 @@
+Flask==3.0.0
+Werkzeug==3.0.1
+yt-dlp>=2023.11.16
+ffmpeg-python==0.2.0
+faster-whisper==0.10.0
+transformers==4.35.2
+torch>=2.0.0
+reportlab>=4.0.7
+python-dotenv>=1.0.0

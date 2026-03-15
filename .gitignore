@@ -1,0 +1,13 @@
+.venv/
+venv/
+__pycache__/
+outputs/
+uploads/
+.env
+*.pdf
+temp_*.txt
+*.mp4
+*.wav
+*.mp3
+.pytest_cache/
+.DS_Store

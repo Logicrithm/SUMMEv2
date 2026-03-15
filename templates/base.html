@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="VidSummarize - AI-Powered Video Transcription and Summarization Platform" />
+  <meta name="keywords" content="video transcription, video summary, AI, YouTube, multilingual" />
+  <meta name="author" content="VidSummarize" />
+
+  <title>
+    {% block title %}VidSummarize - AI Video Transcription & Summarization{%
+    endblock %}
+  </title>
+
+  <!-- Favicon -->
+  <link rel="icon" href="/static/images/favicon.ico" type="image/x-icon" />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans:wght@400;500;600;700;800&family=Noto+Sans+Devanagari:wght@400;500;600;700;800&family=Noto+Sans+Tamil:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet" />
+
+  <!-- CSS Files -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/variables.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/components.css') }}" />
+  {% block extra_css %}{% endblock %}
+
+  <!-- JavaScript Files -->
+  <script src="{{ url_for('static', filename='js/config.js') }}" defer></script>
+  <script src="{{ url_for('static', filename='js/utils.js') }}" defer></script>
+  <script src="{{ url_for('static', filename='js/api.js') }}" defer></script>
+  {% block extra_js %}{% endblock %}
+
+  <!-- Theme Initialization Script (Prevents flash of wrong theme) -->
+  <script>
+    (function() {
+      const savedTheme = localStorage.getItem('vidsummarize-theme');
+      if (savedTheme === 'light') {
+        document.documentElement.setAttribute('data-theme', 'light');
+      }
+    })();
+  </script>
+</head>
+
+<body>
+  <!-- Header/Navigation -->
+  <header class="header">
+    <nav class="container">
+      <div class="nav-wrapper">
+        <!-- Logo -->
+        <a href="/" class="logo">
+          <span class="logo-icon">🎬</span>
+          <span class="logo-text">VidSummarize</span>
+        </a>
+
+        <!-- Navigation Links -->
+        <ul class="nav-links">
+          <li><a href="/" class="nav-link">Home</a></li>
+          <li><a href="#features" class="nav-link">Features</a></li>
+          <li><a href="#how-it-works" class="nav-link">How It Works</a></li>
+          <li><a href="#about" class="nav-link">About</a></li>
+        </ul>
+
+        <!-- Theme Toggle -->
+        <button id="themeToggle" class="theme-toggle-btn" aria-label="Toggle Theme" style="background: transparent; border: none; font-size: 1.5rem; cursor: pointer; color: var(--color-text-primary); margin-left: var(--space-md); transition: transform 0.3s ease;">
+          🌓
+        </button>
+
+        <!-- Mobile Menu Toggle -->
+        <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Toggle menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Mobile Menu -->
+  <div class="mobile-menu hidden" id="mobileMenu">
+    <ul class="mobile-nav-links">
+      <li><a href="/" class="nav-link">Home</a></li>
+      <li><a href="#features" class="nav-link">Features</a></li>
+      <li><a href="#how-it-works" class="nav-link">How It Works</a></li>
+      <li><a href="#about" class="nav-link">About</a></li>
+    </ul>
+  </div>
+
+  <!-- Main Content Area -->
+  <main class="main-content">{% block content %}{% endblock %}</main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <!-- Footer Logo & Description -->
+        <div class="footer-section">
+          <div class="footer-logo">
+            <span class="logo-icon">🎬</span>
+            <span class="logo-text">VidSummarize</span>
+          </div>
+          <p class="footer-description">
+            AI-Powered Video Transcription and Summarization Platform
+          </p>
+        </div>
+
+        <!-- Quick Links -->
+        <div class="footer-section">
+          <h4 class="footer-title">Quick Links</h4>
+          <ul class="footer-links">
+            <li><a href="/">Home</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p class="copyright">
+          © 2025 VidSummarize | Built with 💛 AI + Flask + Whisper + mT5
+        </p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Base JavaScript -->
+  <script>
+    // Mobile menu toggle
+    document.addEventListener("DOMContentLoaded", function () {
+      const mobileMenuToggle = document.getElementById("mobileMenuToggle");
+      const mobileMenu = document.getElementById("mobileMenu");
+
+      if (mobileMenuToggle && mobileMenu) {
+        mobileMenuToggle.addEventListener("click", function () {
+          mobileMenu.classList.toggle("hidden");
+          this.classList.toggle("active");
+        });
+
+        // Close menu when clicking a link
+        const mobileLinks = mobileMenu.querySelectorAll(".nav-link");
+        mobileLinks.forEach((link) => {
+          link.addEventListener("click", () => {
+            mobileMenu.classList.add("hidden");
+            mobileMenuToggle.classList.remove("active");
+          });
+        });
+      }
+
+      // Smooth scroll for anchor links
+      document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+        anchor.addEventListener("click", function (e) {
+          const href = this.getAttribute("href");
+          if (href !== "#" && href !== "") {
+            e.preventDefault();
+            const target = document.querySelector(href);
+            if (target) {
+              target.scrollIntoView({ behavior: "smooth" });
+            }
+          }
+        });
+      });
+
+      // Theme Switcher Logic
+      const themeToggle = document.getElementById('themeToggle');
+      if (themeToggle) {
+        themeToggle.addEventListener('click', () => {
+          const currentTheme = document.documentElement.getAttribute('data-theme');
+          const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+          document.documentElement.setAttribute('data-theme', newTheme);
+          localStorage.setItem('vidsummarize-theme', newTheme);
+          
+          // Add a playful spin animation to the button
+          themeToggle.style.transform = "rotate(360deg)";
+          setTimeout(() => { themeToggle.style.transform = "none"; }, 300);
+        });
+      }
+    });
+  </script>
+
+  {% block extra_scripts %}{% endblock %}
+</body>
+
+</html>
