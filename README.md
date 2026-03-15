@@ -44,8 +44,8 @@ A sleek, modern frontend designed to wow the user at first glance:
 
 - **Backend:** Python 3.11+, Flask
 - **Audio Extraction & Metadata:** `yt-dlp`, FFmpeg
-- **Transcription (AI):** `faster-whisper` (optimized for fast CPU/GPU inference), with OpenAI `whisper` fallback.
-- **Summarization (AI):** HuggingFace `pipeline`, `google/mt5-small` (multilingual T5)
+- **Transcription (AI):** `faster-whisper` (optimized for fast CPU/GPU inference), with offline fallback.
+- **Summarization (AI):** Multi-Provider Free APIs (Groq, Gemini, Hugging Face) + Zero-dependency Extractive Fallback.
 - **Frontend:** HTML5, Vanilla Deep CSS (No Tailwind dependency), JavaScript (Fetch APIs, SSE for progress)
 
 ---
@@ -57,7 +57,7 @@ VidSummarize/
 ├── app.py                     # Main Flask Application & Job Orchestrator
 ├── video_processor.py         # YouTube fetching, subtitle processing, FFmpeg
 ├── smart_transcriber.py       # Audio silence chunking, whisper inference
-├── summarizer.py              # Recursive/Hierarchical mT5 summarization
+├── summarizer.py              # Multi-provider (Groq/Gemini/HF) summarization with Extractive fallback
 ├── pdf_generator.py           # Generation of cleanly formatted PDFs
 ├── templates/
 │   ├── home.html              # Main upload/URL input page
@@ -96,5 +96,5 @@ VidSummarize/
 ---
 
 ## 💡 Status & Future Improvements
-- **Currently Implemented:** Antigravity backend, multilingual processing, basic UI/UX structural revamps.
-- **Next Steps:** Polish the `variables.css` aesthetic themes and add an interactive theme switcher.
+- **Currently Implemented:** Antigravity backend, multilingual processing, deep sea UI, hyper-fast API-based summarization (Groq/Gemini/HF).
+- **Next Steps:** Polish and scale out further logic.
