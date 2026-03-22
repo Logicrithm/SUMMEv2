@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: vidsummarize
+    env: docker
+    region: ohio
+    plan: free
+    branch: main
+    repo: https://github.com/Logicrithm/SUMMEv2 
+    envVars:
+      - key: GROQ_API_KEY
+        generateValue: true # Replace this with real key inside Render UI!
+      - key: PORT
+        value: 5000
