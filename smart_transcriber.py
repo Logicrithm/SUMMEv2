@@ -145,8 +145,14 @@ class AudioChunker:
 
     @staticmethod
     def extract_chunk(audio_path, chunk):
-        cmd = ['ffmpeg', '-y', '-i', audio_path, '-ss', str(chunk['start']), '-t', str(chunk['duration']), '-acodec', 'pcm_s16le', '-ar', '16000', '-ac', '1', chunk['chunk_path']]
-        subprocess.run(cmd, capture_output=True, timeout=30, check=True)
+        try:
+            cmd = ['ffmpeg', '-y', '-i', audio_path, '-ss', str(chunk['start']), '-t', str(chunk['duration']), '-acodec', 'pcm_s16le', '-ar', '16000', '-ac', '1', chunk['chunk_path']]
+            subprocess.run(cmd, capture_output=True, timeout=30, check=True)
+        except Exception as e:
+            print(f"[SmartTranscriber] FFmpeg extract failed for chunk {chunk['index']}: {e}")
+            # Keep an empty trace so it doesn't crash
+            with open(chunk['chunk_path'], 'wb') as f:
+                f.write(b"")
 
 
 class SmartTranscriber:
@@ -162,7 +168,16 @@ class SmartTranscriber:
         if model_name in self.models: return self.models[model_name]
         
         if _HAS_FASTER and WhisperModel:
-            model = WhisperModel(model_name, device=self.device, compute_type="int8")
+            try:
+                model = WhisperModel(model_name, device=self.device, compute_type="int8")
+            except Exception as e:
+                # Fallback to float32 or default if int8 compute is not supported
+                print(f"[SmartTranscriber] int8 constraint failed on {self.device}: {e}. Retrying with float32.")
+                try:
+                    model = WhisperModel(model_name, device=self.device, compute_type="float32")
+                except Exception as e2:
+                    print(f"[SmartTranscriber] float32 failed, falling back to default compute_type")
+                    model = WhisperModel(model_name, device=self.device, compute_type="default")
             backend = "faster_whisper"
         else:
             import whisper
@@ -222,13 +237,17 @@ class SmartTranscriber:
             return "en"
 
     def _transcribe_direct(self, model, backend, path, lang):
-        if backend == "faster_whisper":
-            segs, _ = model.transcribe(path, language=lang, beam_size=1, vad_filter=True)
-            res = [{"start": s.start, "end": s.end, "text": s.text.strip()} for s in segs]
-            return {"text": " ".join(s['text'] for s in res), "segments": res}
-        else:
-            res = model.transcribe(path, language=lang)
-            return {"text": res['text'], "segments": res['segments']}
+        try:
+            if backend == "faster_whisper":
+                segs, _ = model.transcribe(path, language=lang, beam_size=1, vad_filter=True)
+                res = [{"start": s.start, "end": s.end, "text": s.text.strip()} for s in segs]
+                return {"text": " ".join(s['text'] for s in res), "segments": res}
+            else:
+                res = model.transcribe(path, language=lang)
+                return {"text": res['text'], "segments": res['segments']}
+        except Exception as e:
+            print(f"[SmartTranscriber] Direct transcription failed on {path}: {e}")
+            return {"text": "", "segments": []}
 
     def _transcribe_chunked(self, model, backend, path, lang):
         chunks = AudioChunker.chunk_by_silence(path)

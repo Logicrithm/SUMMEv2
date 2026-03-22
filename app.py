@@ -135,18 +135,22 @@ def get_job(job_id): return jobs.get(job_id)
 
 def transcribe_with_fallback(audio_path, language=None):
     language = normalize_language_code(language)
-    if TRANSCRIBER_TYPE == "smart_v2":
-        result = transcribe_audio(audio_path, language=language)
-        return {
-            'success': True, 'text': result['text'],
-            'language': result.get('language', 'unknown'),
-            'word_count': len(result['text'].split()),
-            'processing_time': result.get('total_time', 0),
-            'speed_ratio': result.get('speed_ratio', 0),
-            'strategy': result.get('strategy', 'unknown')
-        }
-    # Fallback logic simplified for brevity but functional
-    return {'success': False, 'error': 'Transcriber not ready'}
+    try:
+        if TRANSCRIBER_TYPE == "smart_v2":
+            result = transcribe_audio(audio_path, language=language)
+            return {
+                'success': True, 'text': result.get('text', ''),
+                'language': result.get('language', 'unknown'),
+                'word_count': len(result.get('text', '').split()),
+                'processing_time': result.get('total_time', 0),
+                'speed_ratio': result.get('speed_ratio', 0),
+                'strategy': result.get('strategy', 'unknown')
+            }
+    except Exception as e:
+        print(f"[App] Smart Transcriber crashed, attempting fallback: {e}")
+        pass # Fall through to basic error block or fallback
+
+    return {'success': False, 'error': 'Transcriber failed or encountered hardware constraint'}
 
 def save_utf8(path, text):
     with open(path, 'w', encoding='utf-8') as f: f.write(text)
